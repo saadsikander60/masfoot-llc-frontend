@@ -25,7 +25,7 @@ export default function TripsPage() {
     try {
       const token = localStorage.getItem("token");
 
-      let url = `http://localhost:5000/api/admin/trips/${id}`;
+      let url = `${process.env.NEXT_PUBLIC_API_URL}/api/admin/trips/${id}`;
 
       if (value && value.trim() !== "") {
         url += `?invoice=${value}`;
@@ -77,7 +77,7 @@ export default function TripsPage() {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await fetch("http://localhost:5000/api/admin/add-trip", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/add-trip`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -22,7 +22,7 @@ export default function VehiclesPage() {
     try {
       const token = localStorage.getItem("token");
 
-      let url = "http://localhost:5000/api/admin/cars";
+      let url = `${process.env.NEXT_PUBLIC_API_URL}/api/admin/cars`;
 
       if (value && value.trim() !== "") {
         url += `?carNumber=${value.toUpperCase()}`;
@@ -66,7 +66,7 @@ export default function VehiclesPage() {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await fetch("http://localhost:5000/api/admin/add-car", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/add-car`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
