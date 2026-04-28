@@ -52,8 +52,10 @@ export default function Dashboard() {
   <span className="text-purple-400 text-xl">🚛</span>
   <span className="text-purple-400 font-medium">Heavy Vehicles</span>
 </div>
-
-       <div className="bg-white/10 p-3 rounded-lg cursor-pointer hover:bg-white/20 transition text-center flex items-center justify-center gap-2">
+<div
+  onClick={() => router.push("/admin/profile")}
+  className="bg-white/10 p-3 rounded-lg cursor-pointer hover:bg-white/20 transition text-center flex items-center justify-center gap-2"
+>
   <span className="text-cyan-400 text-xl">👤</span>
   <span className="text-purple-400 font-medium">Profile</span>
 </div>
