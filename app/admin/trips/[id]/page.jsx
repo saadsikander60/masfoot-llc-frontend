@@ -12,6 +12,8 @@ export default function TripsPage() {
   const [search, setSearch] = useState("");
   const [showModal, setShowModal] = useState(false);
 
+  const [editId, setEditId] = useState(null); // 🔥 NEW
+
   const [form, setForm] = useState({
     date: "",
     location: "",
@@ -72,13 +74,22 @@ export default function TripsPage() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // ➕ ADD TRIP
+  // ➕ / ✏️ SUBMIT (ADD + UPDATE)
   const handleSubmit = async () => {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/add-trip`, {
-        method: "POST",
+      let url = `${process.env.NEXT_PUBLIC_API_URL}/api/admin/add-trip`;
+      let method = "POST";
+
+      // 🔥 UPDATE MODE
+      if (editId) {
+        url = `${process.env.NEXT_PUBLIC_API_URL}/api/admin/trip/${editId}`;
+        method = "PUT";
+      }
+
+      const res = await fetch(url, {
+        method,
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -93,8 +104,8 @@ export default function TripsPage() {
 
       if (data.success) {
         setShowModal(false);
+        setEditId(null); // 🔥 reset
 
-        // reset form
         setForm({
           date: "",
           location: "",
@@ -103,6 +114,44 @@ export default function TripsPage() {
           invoice: "",
         });
 
+        fetchTrips();
+      } else {
+        alert(data.message);
+      }
+
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // ✏️ EDIT CLICK
+  const handleEdit = (trip) => {
+    setEditId(trip._id);
+    setForm({
+      date: trip.date?.split("T")[0],
+      location: trip.location,
+      amount: trip.amount,
+      expense: trip.expense,
+      invoice: trip.invoice,
+    });
+    setShowModal(true);
+  };
+
+  // ❌ DELETE
+  const handleDelete = async (id) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/trip/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
         fetchTrips(); // 🔥 refresh UI
       } else {
         alert(data.message);
@@ -116,14 +165,12 @@ export default function TripsPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-indigo-900 to-black text-white p-6">
 
-      {/* 🔥 Header */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold text-purple-300">
           Vehicle Trips 🚛
         </h1>
 
         <div className="flex gap-3">
-          {/* Search */}
           <input
             type="text"
             placeholder="Search by invoice..."
@@ -132,9 +179,11 @@ export default function TripsPage() {
             className="w-56 p-2 rounded-lg bg-white/10 border border-white/20 text-white"
           />
 
-          {/* Add Button */}
           <button
-            onClick={() => setShowModal(true)}
+            onClick={() => {
+              setEditId(null);
+              setShowModal(true);
+            }}
             className="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg"
           >
             + Add Trip
@@ -142,7 +191,6 @@ export default function TripsPage() {
         </div>
       </div>
 
-      {/* 🔥 TABLE */}
       {loading ? (
         <p className="text-center text-gray-400">Loading...</p>
       ) : trips.length === 0 ? (
@@ -158,6 +206,7 @@ export default function TripsPage() {
                 <th className="p-3">Expense</th>
                 <th className="p-3">Profit</th>
                 <th className="p-3">Date</th>
+                <th className="p-3">Actions</th> {/* 🔥 NEW */}
               </tr>
             </thead>
 
@@ -172,6 +221,24 @@ export default function TripsPage() {
                   <td className="p-3">
                     {new Date(trip.date).toLocaleDateString()}
                   </td>
+
+                  {/* 🔥 BUTTONS */}
+                  <td className="p-3 flex gap-2">
+                    <button
+                      onClick={() => handleEdit(trip)}
+                      className="bg-blue-600 px-3 py-1 rounded"
+                    >
+                      Update
+                    </button>
+
+                    <button
+                      onClick={() => handleDelete(trip._id)}
+                      className="bg-red-600 px-3 py-1 rounded"
+                    >
+                      Delete
+                    </button>
+                  </td>
+
                 </tr>
               ))}
             </tbody>
@@ -179,13 +246,12 @@ export default function TripsPage() {
         </div>
       )}
 
-      {/* 🔥 MODAL FORM */}
       {showModal && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center">
           <div className="bg-gradient-to-br from-purple-900 via-indigo-900 to-black p-6 rounded-xl w-full max-w-md border border-white/20">
 
             <h2 className="text-xl font-bold mb-4 text-purple-300">
-              Add Trip 🚛
+              {editId ? "Update Trip ✏️" : "Add Trip 🚛"}
             </h2>
 
             <div className="space-y-3">
