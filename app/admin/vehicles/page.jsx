@@ -136,6 +136,10 @@ export default function VehiclesPage() {
         >
           + Add New Vehicle
         </button>
+
+        <p className="text-sm text-gray-300 mt-2">
+  Total Vehicles: {cars.length}
+</p>
       </div>
 
       <div className="flex justify-center mb-6">
@@ -153,11 +157,11 @@ export default function VehiclesPage() {
           <thead className="bg-white/10 text-purple-300">
             <tr>
               <th className="p-3">Car Name</th>
-              <th className="p-3">Number</th>
+              <th className="p-3">V/Number</th>
               <th className="p-3">Color</th>
               <th className="p-3">Owner</th>
-              <th className="p-3">Date</th>
-              <th className="p-3">Action</th> {/* 🔥 NEW */}
+              <th className="p-3"> RG/Date</th>
+              <th className="p-3">Action</th> 
             </tr>
           </thead>
 

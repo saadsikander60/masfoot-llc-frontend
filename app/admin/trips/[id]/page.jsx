@@ -11,6 +11,9 @@ export default function TripsPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const [month, setMonth] = useState(
+  new Date().toISOString().slice(0, 7)
+);
 
   const [editId, setEditId] = useState(null); // 🔥 NEW
 
@@ -23,38 +26,38 @@ export default function TripsPage() {
   });
 
   // 🔥 FETCH TRIPS
-  const fetchTrips = async (value = "") => {
-    try {
-      const token = localStorage.getItem("token");
+const fetchTrips = async (value = "", selectedMonth = month) => {
+  try {
+    const token = localStorage.getItem("token");
 
-      let url = `${process.env.NEXT_PUBLIC_API_URL}/api/admin/trips/${id}`;
+    let url = `${process.env.NEXT_PUBLIC_API_URL}/api/admin/trips/${id}?month=${selectedMonth}`;
 
-      if (value && value.trim() !== "") {
-        url += `?invoice=${value}`;
-      }
+    // 🔍 invoice + month dono handle
+    if (value && value.trim() !== "") {
+      url += `&invoice=${value}`;
+    }
 
-      const res = await fetch(url, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+    const res = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-      const data = await res.json();
+    const data = await res.json();
 
-      if (data.success) {
-        setTrips(data.trips || []);
-      } else {
-        setTrips([]);
-      }
-
-    } catch (error) {
-      console.log(error);
+    if (data.success) {
+      setTrips(data.trips || []);
+    } else {
       setTrips([]);
     }
 
-    setLoading(false);
-  };
+  } catch (error) {
+    console.log(error);
+    setTrips([]);
+  }
 
+  setLoading(false);
+};
   useEffect(() => {
     if (id) {
       setLoading(true);
@@ -178,6 +181,15 @@ export default function TripsPage() {
             onChange={handleSearch}
             className="w-56 p-2 rounded-lg bg-white/10 border border-white/20 text-white"
           />
+          <input
+  type="month"
+  value={month}
+  onChange={(e) => {
+    setMonth(e.target.value);
+    fetchTrips(search, e.target.value);
+  }}
+  className="p-2 rounded bg-white/10 border border-white/20 text-white"
+/>
 
           <button
             onClick={() => {
