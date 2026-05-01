@@ -23,7 +23,7 @@ export default function Login() {
 
       if (data.success) {
         localStorage.setItem("token", data.token);
-        window.location.href = "/admin/dashboard";
+       window.location.replace("/admin/dashboard");
       } else {
         alert(data.message);
       }

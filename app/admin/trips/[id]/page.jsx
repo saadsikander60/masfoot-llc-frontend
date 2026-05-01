@@ -2,9 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export default function TripsPage() {
   const params = useParams();
+  const router = useRouter();
   const id = params.id;
 
   const [trips, setTrips] = useState([]);
@@ -185,8 +187,8 @@ const fetchTrips = async (value = "", selectedMonth = month) => {
 
       <button
   onClick={() => {
-    window.location.href = `/admin/trips/${id}/logs`;
-  }}
+   router.push(`/admin/trips/${id}/logs`);
+  }}        
   className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg"
 >
   View Logs
@@ -236,7 +238,7 @@ const fetchTrips = async (value = "", selectedMonth = month) => {
                 <th className="p-3">Expense</th>
                 <th className="p-3">Profit</th>
                 <th className="p-3">Date</th>
-                <th className="p-3">Actions</th> {/* 🔥 NEW */}
+                <th className="p-3">Actions</th> 
               </tr>
             </thead>
 

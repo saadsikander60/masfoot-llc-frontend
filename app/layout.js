@@ -1,15 +1,6 @@
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import AppWrapper from "./components/AppWrapper";
+import AuthGuard from "./components/AuthGuard";
 
 export const metadata = {
   title: "Masfoot LLC",
@@ -18,11 +9,15 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">{children}</body>
+    <html lang="en" className="h-full">
+      <body className="min-h-full flex flex-col bg-black">
+        
+        {/* 🔥 Auth Guard */}
+        <AuthGuard>
+          <AppWrapper>{children}</AppWrapper>
+        </AuthGuard>
+
+      </body>
     </html>
   );
 }
