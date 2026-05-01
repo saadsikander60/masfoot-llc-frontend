@@ -30,9 +30,17 @@ const fetchTrips = async (value = "", selectedMonth = month) => {
   try {
     const token = localStorage.getItem("token");
 
-    let url = `${process.env.NEXT_PUBLIC_API_URL}/api/admin/trips/${id}?month=${selectedMonth}`;
+    let url = `${process.env.NEXT_PUBLIC_API_URL}/api/admin/trips/${id}`;
 
-    // 🔍 invoice + month dono handle
+    // 🔥 split month + year
+    if (selectedMonth) {
+      const year = selectedMonth.split("-")[0];
+      const month = selectedMonth.split("-")[1];
+
+      url += `?month=${parseInt(month)}&year=${year}`;
+    }
+
+    // 🔍 invoice add
     if (value && value.trim() !== "") {
       url += `&invoice=${value}`;
     }
@@ -174,6 +182,15 @@ const fetchTrips = async (value = "", selectedMonth = month) => {
         </h1>
 
         <div className="flex gap-3">
+
+      <button
+  onClick={() => {
+    window.location.href = `/admin/trips/${id}/logs`;
+  }}
+  className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg"
+>
+  View Logs
+</button>
           <input
             type="text"
             placeholder="Search by invoice..."
@@ -184,10 +201,11 @@ const fetchTrips = async (value = "", selectedMonth = month) => {
           <input
   type="month"
   value={month}
-  onChange={(e) => {
-    setMonth(e.target.value);
-    fetchTrips(search, e.target.value);
-  }}
+ onChange={(e) => {
+  console.log("MONTH VALUE:", e.target.value); // 🔥 ADD THIS
+  setMonth(e.target.value);
+  fetchTrips(search, e.target.value);
+}}
   className="p-2 rounded bg-white/10 border border-white/20 text-white"
 />
 
